@@ -159,7 +159,7 @@
  * var addarray                   = {};
  * addarray['entryType']          = 'Article';
  * addarray['cite']               = 'art2';
- * addarray['title']              = 'Titel of the Article';
+ * addarray['title']              = 'Title of the Article';
  * addarray['author'] = [];
  * addarray['author'][0]['first'] = 'John';
  * addarray['author'][0]['last']  = 'Doe';
@@ -916,7 +916,10 @@ BibTex.prototype = {
 	 * @access public
 	 * @return boolean true on success and PEAR_Error if there was a problem
 	 */
-	parse : function() {
+	parse : function(input) {
+		if(input){
+			this.content = input;
+		}
 		//alert("starting to parse");
 		//The amount of opening braces is compared to the amount of closing braces
 		//Braces inside comments are ignored
