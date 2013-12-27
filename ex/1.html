@@ -5,9 +5,8 @@
 		<script src="../js/jsBibtex.js"></script>
 		<script>
 function parse(){
-	bibtex = new BibTex();
-	bibtex.parse(document.getElementById("bibtex").value);
-	document.getElementById("json").innerHTML = print_r(bibtex.data,true);
+	var data = jsbibtex.parse(document.getElementById("bibtext").value);
+	document.getElementById("json").innerHTML = print_r(data,true);
 }
 		</script>
 	</head>
@@ -20,7 +19,7 @@ function parse(){
 					<td style="width:425px">JSON</td>
 				</tr><tr>
 					<td>
-						<textarea id="bibtex" rows="7" style="width:100%;">
+						<textarea id="bibtext" rows="7" style="width:100%;">
 @book{von2007theory,
   title={Theory of games and economic behavior},
   author={Von Neumann, John and Morgenstern, Oskar},
