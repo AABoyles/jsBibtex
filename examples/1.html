@@ -4,22 +4,22 @@
 		<title>jsBibTeX Example 1</title>
 		<script src="../javascripts/jsBibtex.js"></script>
 		<script>
-function parse(){
-	var data = jsbibtex.parse(document.getElementById("bibtext").value);
-	document.getElementById("json").innerHTML = print_r(data,true);
-}
+      function parse() {
+        var data = jsBibTex.parse(document.getElementById("bibtext").value);
+        document.getElementById("json").innerHTML = JSON.stringify(data, undefined, 2);
+      }
 		</script>
 	</head>
-	<body>
-		<textarea id="bibtext" rows="7" style="width:100%;">
+	<body style="text-align:center;padding:0 15%;">
+		<textarea id="bibtext" rows="7" style="width:40%;float:left;">
 @book{von2007theory,
   title={Theory of games and economic behavior},
   author={Von Neumann, John and Morgenstern, Oskar},
   year={1943},
   publisher={Princeton university press}
 }
-		</textarea>						
+		</textarea>
 		<input type="button" value="Convert!" onclick="parse()" />
-		<textarea id="json" rows="7" style="width:100%;"></textarea>
+		<textarea id="json" rows="7" style="width:40%;float:right;"></textarea>
 	</body>
 </html>
