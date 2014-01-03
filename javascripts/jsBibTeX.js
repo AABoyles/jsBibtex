@@ -31,20 +31,17 @@
  *    2. Output parsed BibTex entries as HTML, RTF, or BibTex.
  *
  */
+var php = {};
 
-function array() {
-	return Array.prototype.slice.call(arguments);
-}
-
-function array_key_exists(key, search) {
+php.array_key_exists = function(key, search) {
 	if (!search || (search.constructor !== Array && search.constructor !== Object)) {
 		return false;
 	}
 
 	return key in search;
-}
+};
 
-function array_keys(input, search_value, strict) {
+php.array_keys = function(input, search_value, strict) {
 	var tmp_arr = new Array(), strict = !!strict, include = true, cnt = 0;
 
 	for (key in input ) {
@@ -64,38 +61,15 @@ function array_keys(input, search_value, strict) {
 	}
 
 	return tmp_arr;
-}
+};
 
-function in_array(needle, haystack, strict) {
-
-	var found = false, key, strict = !!strict;
-
-	for (key in haystack) {
-		if ((strict && haystack[key] === needle) || (!strict && haystack[key] == needle)) {
-			found = true;
-			break;
+function in_array(needle, haystack) {
+	for (var key in haystack) {
+		if (haystack[key] == needle) {
+			return true;
 		}
 	}
-
-	return found;
-}
-
-function count(mixed_var, mode) {
-	var key, cnt = 0;
-
-	if (mode == 'COUNT_RECURSIVE')
-		mode = 1;
-	if (mode != 1)
-		mode = 0;
-
-	for (key in mixed_var) {
-		cnt++;
-		if (mode == 1 && mixed_var[key] && (mixed_var[key].constructor === Array || mixed_var[key].constructor === Object)) {
-			cnt += count(mixed_var[key], 1);
-		}
-	}
-
-	return cnt;
+	return false;
 }
 
 function explode(delimiter, string, limit) {
@@ -134,36 +108,18 @@ function explode(delimiter, string, limit) {
 
 function str_replace(search, replace, subject) {
 	var f = search, r = replace, s = subject;
-	var ra = is_array(r), sa = is_array(s), f = [].concat(f), r = [].concat(r), i = ( s = [].concat(s)).length;
+	var ra = r instanceof Array, sa = s instanceof Array, f = [].concat(f), r = [].concat(r), i = ( s = [].concat(s)).length;
 
 	while ( j = 0, i--) {
-		while (s[i] = s[i].split(f[j]).join( ra ? r[j] || "" : r[0]), ++j in f) {
-		};
+		while (s[i] = s[i].split(f[j]).join( ra ? r[j] || "" : r[0]), ++j in f) {};
 	};
 
 	return sa ? s : s[0];
 }
 
-function strlen(string) {
-	return ("" + string).length;
-}
-
-function strpos(haystack, needle, offset) {
-	var i = haystack.indexOf(needle, offset);
-	return i >= 0 ? i : false;
-}
-
 function strrpos(haystack, needle, offset) {
 	var i = haystack.lastIndexOf(needle, offset);
 	return i >= 0 ? i : false;
-}
-
-function strtolower(str) {
-	return str.toLowerCase();
-}
-
-function strtoupper(str) {
-	return str.toUpperCase();
 }
 
 function substr(f_string, f_start, f_length) {
@@ -186,49 +142,17 @@ function substr(f_string, f_start, f_length) {
 	return f_string.substring(f_start, f_length);
 }
 
-function trim(str, charlist) {
-	var whitespace;
-
-	if (!charlist) {
-		whitespace = ' \n\r\t\f\x0b\xa0\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u200b\u2028\u2029\u3000';
-	} else {
-		whitespace = charlist.replace(/([\[\]\(\)\.\?\/\*\{\}\+\$\^\:])/g, '\$1');
-	}
-
-	for (var i = 0; i < str.length; i++) {
-		if (whitespace.indexOf(str.charAt(i)) === -1) {
-			str = str.substring(i);
-			break;
-		}
-	}
-	for ( i = str.length - 1; i >= 0; i--) {
-		if (whitespace.indexOf(str.charAt(i)) === -1) {
-			str = str.substring(0, i + 1);
-			break;
-		}
-	}
-	return whitespace.indexOf(str.charAt(0)) === -1 ? str : '';
-}
-
-function wordwrap(str, int_width, str_break, cut) {
+php.wordwrap = function(str, int_width, str_break, cut) {
 	var m = int_width, b = str_break, c = cut;
 	var i, j, l, s, r;
-
-	if (m < 1) {
-		return str;
-	}
+	if (m < 1) { return str; }
 	for ( i = -1, l = ( r = str.split("\n")).length; ++i < l; r[i] += s) {
 		for ( s = r[i], r[i] = ""; s.length > m; r[i] += s.slice(0, j) + (( s = s.slice(j)).length ? b : "")) {
 			j = c == 2 || (j = s.slice(0, m + 1).match(/\S*(\s)?$/))[1] ? m : j.input.length - j[0].length || c == 1 && m || j.input.length + ( j = s.slice(m).match(/^\S*/)).input.length;
 		}
 	}
-
 	return r.join("\n");
-}
-
-function is_string(mixed_var) {
-	return ( typeof (mixed_var ) == 'string');
-}
+};
 
 function array_unique(array) {
 	var p, i, j, tmp_arr = array;
@@ -244,11 +168,7 @@ function array_unique(array) {
 	return tmp_arr;
 }
 
-function is_array(mixed_var) {
-	return ( mixed_var instanceof Array );
-}
-
-function BibTex(options) {
+function BibTeX(options) {
 	if ( typeof options == 'undefined'){
 		options = {};
 	}
@@ -279,15 +199,15 @@ function BibTex(options) {
 	}
 	this.rtfstring = 'AUTHORS, "{\b TITLE}", {\i JOURNAL}, YEAR';
 	this.htmlstring = 'AUTHORS, "<strong>TITLE</strong>", <em>JOURNAL</em>, YEAR<br />';
-	this.allowedEntryTypes = array('article', 'book', 'booklet', 'confernce', 'inbook', 'incollection', 'inproceedings', 'manual', 'masterthesis', 'misc', 'phdthesis', 'proceedings', 'techreport', 'unpublished');
+	this.allowedEntryTypes = ['article', 'book', 'booklet', 'confernce', 'inbook', 'incollection', 'inproceedings', 'manual', 'masterthesis', 'misc', 'phdthesis', 'proceedings', 'techreport', 'unpublished'];
 	this.authorstring = 'VON LAST, JR, FIRST';
 }
 
-BibTex.prototype = {
+BibTeX.prototype = {
 
 	setOption : function(option, value) {
 		ret = true;
-		if (array_key_exists(option, this._options)) {
+		if (php.array_key_exists(option, this._options)) {
 			this._options[option] = value;
 		} else {
 			ret = this.raiseError('Unknown option ' + option);
@@ -307,7 +227,7 @@ BibTex.prototype = {
 		var charv = '';
 		var lastchar = '';
 		var buffer = '';
-		for (var i = 0; i < strlen(this.content); i++) {
+		for (var i = 0; i < this.content.length; i++) {
 			charv = substr(this.content, i, 1);
 			if ((0 != open) && ('@' == charv)) {
 				if (!this._checkAt(buffer)) {
@@ -364,13 +284,13 @@ BibTex.prototype = {
 		}
 		//Are there Multiple entries with the same cite?
 		if (this._options['validate']) {
-			cites = array();
+			cites = [];
 			for (var i = 0; i < this.data.length; i++) {
 				cites[cites.length] = this.data[i]['cite'];
 			}
 			unique = array_unique(cites);
 			if (cites.length != unique.length) {//Some values have not been unique!
-				notuniques = array();
+				notuniques = [];
 				for (var i = 0; i < cites.length; i++) {
 					if ('' == unique[i]) {
 						notuniques[notuniques.length] = cites[i];
@@ -394,12 +314,12 @@ BibTex.prototype = {
 			//We need a copy for printing the warnings
 		}
 		var ret = {};
-		if ('@string' == strtolower(substr(entry, 0, 7))) {
+		if ('@string' == substr(entry, 0, 7).toLowerCase()) {
 			//String are not yet supported!
 			if (this._options['validate']) {
 				this._generateWarning('STRING_ENTRY_NOT_YET_SUPPORTED', '', entry + '}');
 			}
-		} else if ('@preamble' == strtolower(substr(entry, 0, 9))) {
+		} else if ('@preamble' == substr(entry, 0, 9).toLowerCase()) {
 			//Preamble not yet supported!
 			if (this._options['validate']) {
 				this._generateWarning('PREAMBLE_ENTRY_NOT_YET_SUPPORTED', '', entry + '}');
@@ -428,10 +348,10 @@ BibTex.prototype = {
 					}
 				}
 
-				value = trim(substr(entry, position + 1));
+				value = substr(entry, position + 1).trim();
 				entry = substr(entry, 0, position);
 
-				if (',' == substr(value, strlen(value) - 1, 1)) {
+				if (',' == substr(value, value.length - 1, 1)) {
 					value = substr(value, 0, -1);
 				}
 				if (this._options['validate']) {
@@ -447,15 +367,14 @@ BibTex.prototype = {
 					value = this._removeCurlyBraces(value);
 				}
 				position = strrpos(entry, ',');
-				field = strtolower(trim(substr(entry, position + 1)));
+				field = substr(entry, position + 1).trim().toLowerCase();
 				ret[field] = value;
 				entry = substr(entry, 0, position);
 			}
 			//Parsing cite and entry type
 			var arr = explode('{', entry);
-			ret['cite'] = trim(arr[1]);
-			ret['entryType'] = strtolower(trim(arr[0]));
-			//alert(array_keys(ret));
+			ret['cite'] = arr[1].trim();
+			ret['entryType'] = arr[0].trim().toLowerCase();
 			if ('@' == ret['entryType'].substring(0, 1)) {
 				ret['entryType'] = substr(ret['entryType'], 1);
 			}
@@ -465,7 +384,7 @@ BibTex.prototype = {
 				}
 			}
 			//Handling the authors
-			if (in_array('author', array_keys(ret)) && this._options['extractAuthors']) {
+			if (in_array('author', php.array_keys(ret)) && this._options['extractAuthors']) {
 				ret['author'] = this._extractAuthors(ret['author']);
 			}
 		}
@@ -477,9 +396,8 @@ BibTex.prototype = {
 		//This is getting tricky
 		//We check the string backwards until the position and count the closing an opening braces
 		//If we reach the position the amount of opening and closing braces should be equal
-		var length = strlen(entry);
 		var open = 0;
-		for (var i = length - 1; i >= position; i--) {
+		for (var i = entry.length - 1; i >= position; i--) {
 			precedingchar = substr(entry, i - 1, 1);
 			charv = substr(entry, i, 1);
 			if (('{' == charv) && ('\\' != precedingchar)) {
@@ -495,10 +413,10 @@ BibTex.prototype = {
 		//There is still the posibility that the entry is delimited by double quotes+
 		//Then it is possible that the braces are equal even if the '=' is in an equation+
 		if (ret) {
-			entrycopy = trim(entry);
-			lastchar = substr(entrycopy, strlen(entrycopy) - 1, 1);
+			entrycopy = entry.trim();
+			lastchar = substr(entrycopy, entrycopy.length - 1, 1);
 			if (',' == lastchar) {
-				lastchar = substr(entrycopy, strlen(entrycopy) - 2, 1);
+				lastchar = substr(entrycopy, entrycopy.length - 2, 1);
 			}
 			if ('"' == lastchar) {
 				//The return value is set to false
@@ -506,7 +424,7 @@ BibTex.prototype = {
 				//Remember we begin to search the entry backwards so the " has to show up twice - ending and beginning delimiter
 				ret = false;
 				found = 0;
-				for (var i = length; i >= position; i--) {
+				for (var i = entry.length; i >= position; i--) {
 					precedingchar = substr(entry, i - 1, 1);
 					charv = substr(entry, i, 1);
 					if (('"' == charv) && ('\\' != precedingchar)) {
@@ -528,7 +446,7 @@ BibTex.prototype = {
 
 	'_checkAt' : function(entry) {
 		var ret = false;
-		var opening = array_keys(this._delimiters);
+		var opening = php.array_keys(this._delimiters);
 		var closing = array_values(this._delimiters);
 		//Getting the value (at is only allowd in values)
 		if (strrpos(entry, '=') !== false) {
@@ -545,11 +463,11 @@ BibTex.prototype = {
 					proceed = false;
 				}
 			}
-			value = trim(substr(entry, position + 1));
+			value = substr(entry, position + 1).trim();
 			open = 0;
 			charv = '';
 			lastchar = '';
-			for (var i = 0; i < strlen(value); i++) {
+			for (var i = 0; i < value.length; i++) {
 				charv = substr(this.content, i, 1);
 				if (in_array(charv, opening) && ('\\' != lastchar)) {
 					open++;
@@ -567,8 +485,7 @@ BibTex.prototype = {
 	},
 
 	'_stripDelimiter' : function(entry) {
-		var beginningdels = array_keys(this._delimiters);
-		var ength = strlen(entry);
+		var beginningdels = php.array_keys(this._delimiters);
 		var firstchar = substr(entry, 0, 1);
 		var lastchar = substr(entry, -1, 1);
 		while (in_array(firstchar, beginningdels)) {//The first character is an opening delimiter
@@ -584,31 +501,30 @@ BibTex.prototype = {
 	},
 
 	'_unwrap' : function(entry) {
-		entry = entry.replace(/\s+/, ' ');
-		return trim(entry);
+		return entry.replace(/\s+/, ' ').trim();
 	},
 
 	'_wordwrap' : function(entry) {
-		if (('' != entry) && (is_string(entry))) {
-			entry = wordwrap(entry, this._options['wordWrapWidth'], this._options['wordWrapBreak'], this._options['wordWrapCut']);
+		if (('' != entry) && (typeof entry == 'string')) {
+			entry = php.wordwrap(entry, this._options['wordWrapWidth'], this._options['wordWrapBreak'], this._options['wordWrapCut']);
 		}
 		return entry;
 	},
 
 	'_extractAuthors' : function(entry) {
 		entry = this._unwrap(entry);
-		var authorarray = array();
+		var authorarray = [];
 		authorarray = explode(' and ', entry);
 		for (var i = 0; i < authorarray.length; i++) {
-			var author = trim(authorarray[i]);
+			var author = authorarray[i].trim();
 			/*The first version of how an author could be written (First von Last)
 			 has no commas in it*/
 			var first = '';
 			var von = '';
 			var last = '';
 			var jr = '';
-			if (strpos(author, ',') === false) {
-				var tmparray = array();
+			if (author.indexOf(',') === -1) {
+				var tmparray = [];
 				//tmparray = explode(' ', author);
 				tmparray = explode(' |~', author);
 				var size = tmparray.length;
@@ -667,10 +583,10 @@ BibTex.prototype = {
 					last += ' ' + tmparray[size - 1];
 				}
 			} else {//Version 2 and 3
-				var tmparray = array();
+				var tmparray = [];
 				tmparray = explode(',', author);
 				//The first entry must contain von and last
-				vonlastarray = array();
+				vonlastarray = [];
 				vonlastarray = explode(' ', tmparray[0]);
 				size = vonlastarray.length;
 				if (1 == size) {//Only one entry.got to be the last
@@ -713,10 +629,10 @@ BibTex.prototype = {
 				first = tmparray[tmparray.length - 1];
 			}
 			authorarray[i] = {
-				'first' : trim(first),
-				'von' : trim(von),
-				'last' : trim(last),
-				'jr' : trim(jr)
+				'first' : first.trim(),
+				'von' : von.trim(),
+				'last' : last.trim(),
+				'jr' : jr.trim()
 			};
 		}
 		return authorarray;
@@ -724,14 +640,14 @@ BibTex.prototype = {
 
 	'_determineCase' : function(word) {
 		var ret = -1;
-		var trimmedword = trim(word);
+		var trimmedword = word.trim();
 		/*We need this variable+ Without the next of would not work
 		 (trim changes the variable automatically to a string!)*/
-		if (is_string(word) && (strlen(trimmedword) > 0)) {
+		if (typeof word == "string" && (trimmedword.length > 0)) {
 			var i = 0;
 			var found = false;
 			var openbrace = 0;
-			while (!found && (i <= strlen(word))) {
+			while (!found && (i <= word.length)) {
 				var letter = substr(trimmedword, i, 1);
 				var ordv = letter.charCodeAt(0);
 				if (ordv == 123) {//Open brace
@@ -774,7 +690,7 @@ BibTex.prototype = {
 		var open = 0;
 		var lastchar = '';
 		var charv = '';
-		for (var i = 0; i < strlen(entry); i++) {
+		for (var i = 0; i < entry.length; i++) {
 			charv = substr(entry, i, 1);
 			if (('{' == charv) && ('\\' != lastchar)) {
 				open++;
@@ -791,7 +707,7 @@ BibTex.prototype = {
 
 	'_removeCurlyBraces' : function(value) {
 		//First we save the delimiters
-		var beginningdels = array_keys(this._delimiters);
+		var beginningdels = php.array_keys(this._delimiters);
 		var firstchar = substr(value, 0, 1);
 		var lastchar = substr(value, -1, 1);
 		var begin = '';
@@ -827,7 +743,7 @@ BibTex.prototype = {
 	},
 
 	'clearWarnings' : function() {
-		this.warnings = array();
+		this.warnings = [];
 	},
 
 	'hasWarning' : function() {
@@ -839,32 +755,32 @@ BibTex.prototype = {
 	},
 
 	'_formatAuthor' : function(array) {
-		if (!array_key_exists('von', array)) {
+		if (!php.array_key_exists('von', array)) {
 			array['von'] = '';
 		} else {
-			array['von'] = trim(array['von']);
+			array['von'] = array['von'].trim();
 		}
-		if (!array_key_exists('last', array)) {
+		if (!php.array_key_exists('last', array)) {
 			array['last'] = '';
 		} else {
-			array['last'] = trim(array['last']);
+			array['last'] = array['last'].trim();
 		}
-		if (!array_key_exists('jr', array)) {
+		if (!php.array_key_exists('jr', array)) {
 			array['jr'] = '';
 		} else {
-			array['jr'] = trim(array['jr']);
+			array['jr'] = array['jr'].trim();
 		}
-		if (!array_key_exists('first', array)) {
+		if (!php.array_key_exists('first', array)) {
 			array['first'] = '';
 		} else {
-			array['first'] = trim(array['first']);
+			array['first'] = array['first'].trim();
 		}
 		ret = this.authorstring;
 		ret = str_replace("VON", array['von'], ret);
 		ret = str_replace("LAST", array['last'], ret);
 		ret = str_replace("JR", array['jr'], ret);
 		ret = str_replace("FIRST", array['first'], ret);
-		return trim(ret);
+		return ret.trim();
 	},
 
 	'bibTex' : function() {
@@ -872,21 +788,21 @@ BibTex.prototype = {
 		for (var i = 0; i < this.data.length; i++) {
 			var entry = this.data[i];
 			//Intro
-			bibtex += '@' + strtolower(entry['entryType']) + ' { ' + entry['cite'] + ",\n";
+			bibtex += '@' + entry['entryType'].toLowerCase() + ' { ' + entry['cite'] + ",\n";
 			//Other fields except author
 			for (key in entry) {
 				var val = entry[key];
 				if (this._options['wordWrapWidth'] > 0) {
 					val = this._wordWrap(val);
 				}
-				if (!in_array(key, array('cite', 'entryType', 'author'))) {
+				if (!in_array(key, ['cite', 'entryType', 'author'])) {
 					bibtex += "\t" + key + ' = {' + val + "},\n";
 				}
 			}
 			//Author
-			if (array_key_exists('author', entry)) {
+			if (php.array_key_exists('author', entry)) {
 				if (this._options['extractAuthors']) {
-					tmparray = array();
+					tmparray = [];
 					//In this array the authors are saved and the joind with an and
 					for (j in entry['author']) {
 						var authorentry = entry['author'][j];
@@ -910,10 +826,10 @@ BibTex.prototype = {
 	},
 
 	'getStatistic' : function() {
-		var ret = array();
+		var ret = [];
 		for (var i = 0; i < this.data.length; i++) {
 			var entry = this.data[i];
-			if (array_key_exists(entry['entryType'], ret)) {
+			if (php.array_key_exists(entry['entryType'], ret)) {
 				ret[entry['entryType']]++;
 			} else {
 				ret[entry['entryType']] = 1;
@@ -931,18 +847,18 @@ BibTex.prototype = {
 			journal = '';
 			year = '';
 			authors = '';
-			if (array_key_exists('title', entry)) {
+			if (php.array_key_exists('title', entry)) {
 				title = this._unwrap(entry['title']);
 			}
-			if (array_key_exists('journal', entry)) {
+			if (php.array_key_exists('journal', entry)) {
 				journal = this._unwrap(entry['journal']);
 			}
-			if (array_key_exists('year', entry)) {
+			if (php.array_key_exists('year', entry)) {
 				year = this._unwrap(entry['year']);
 			}
-			if (array_key_exists('author', entry)) {
+			if (php.array_key_exists('author', entry)) {
 				if (this._options['extractAuthors']) {
-					tmparray = array();
+					tmparray = [];
 					//In this array the authors are saved and the joind with an and
 					for (var j in entry['author']) {
 						var authorentry = entry['author'][j];
@@ -981,18 +897,18 @@ BibTex.prototype = {
 			var journal = '';
 			var year = '';
 			var authors = '';
-			if (array_key_exists('title', entry)) {
+			if (php.array_key_exists('title', entry)) {
 				title = this._unwrap(entry['title']);
 			}
-			if (array_key_exists('journal', entry)) {
+			if (php.array_key_exists('journal', entry)) {
 				journal = this._unwrap(entry['journal']);
 			}
-			if (array_key_exists('year', entry)) {
+			if (php.array_key_exists('year', entry)) {
 				year = this._unwrap(entry['year']);
 			}
-			if (array_key_exists('author', entry)) {
+			if (php.array_key_exists('author', entry)) {
 				if (this._options['extractAuthors']) {
-					tmparray = array();
+					tmparray = [];
 					//In this array the authors are saved and the joind with an and
 					for (j in entry['author'] ) {
 						var authorentry = entry['author'][j];
@@ -1020,4 +936,4 @@ BibTex.prototype = {
 	}
 };
 
-jsBibTex = new BibTex();
+jsBibTeX = new BibTeX();
