@@ -1,6 +1,6 @@
 /**
  * Javascript BibTex Parser v0.1.3
- * Copyright (c) Tony Boyles <AABoyles@gmail.com>
+ * Copyright (c) 2013-4, Tony Boyles <AABoyles@gmail.com>
  *
  * License:
  *
@@ -16,19 +16,6 @@
  *
  *     You should have received a copy of the GNU General Public License
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- *
- * Credits:
- *
- * This library is a modification of a port of the PEAR Structures_BibTex
- * parser written in PHP (http://pear.php.net/package/Structures_BibTex).
- *
- * Synopsis:
- * ----------
- *
- * This class provides the following functionality:
- *    1. Parse BibTex into a logical data javascript data structure.
- *    2. Output parsed BibTex entries as HTML, RTF, or BibTex.
  *
  */
 var php = {};
@@ -63,16 +50,16 @@ php.array_keys = function(input, search_value, strict) {
 	return tmp_arr;
 };
 
-function in_array(needle, haystack) {
+php.in_array = function(needle, haystack) {
 	for (var key in haystack) {
 		if (haystack[key] == needle) {
 			return true;
 		}
 	}
 	return false;
-}
+};
 
-function explode(delimiter, string, limit) {
+php.explode = function(delimiter, string, limit) {
 	var emptyArray = {
 		0 : ''
 	};
@@ -104,9 +91,9 @@ function explode(delimiter, string, limit) {
 		partA.push(partB);
 		return partA;
 	}
-}
+};
 
-function str_replace(search, replace, subject) {
+php.str_replace = function(search, replace, subject) {
 	var f = search, r = replace, s = subject;
 	var ra = r instanceof Array, sa = s instanceof Array, f = [].concat(f), r = [].concat(r), i = ( s = [].concat(s)).length;
 
@@ -115,14 +102,14 @@ function str_replace(search, replace, subject) {
 	};
 
 	return sa ? s : s[0];
-}
+};
 
-function strrpos(haystack, needle, offset) {
+php.strrpos = function(haystack, needle, offset) {
 	var i = haystack.lastIndexOf(needle, offset);
 	return i >= 0 ? i : false;
-}
+};
 
-function substr(f_string, f_start, f_length) {
+php.substr = function(f_string, f_start, f_length) {
 	if (f_start < 0) {
 		f_start += f_string.length;
 	}
@@ -140,7 +127,7 @@ function substr(f_string, f_start, f_length) {
 	}
 
 	return f_string.substring(f_start, f_length);
-}
+};
 
 php.wordwrap = function(str, int_width, str_break, cut) {
 	var m = int_width, b = str_break, c = cut;
@@ -154,7 +141,7 @@ php.wordwrap = function(str, int_width, str_break, cut) {
 	return r.join("\n");
 };
 
-function array_unique(array) {
+php.array_unique = function(array) {
 	var p, i, j, tmp_arr = array;
 	for ( i = tmp_arr.length; i; ) {
 		for ( p = --i; p > 0; ) {
@@ -164,9 +151,8 @@ function array_unique(array) {
 			}
 		}
 	}
-
 	return tmp_arr;
-}
+};
 
 function BibTeX(options) {
 	if ( typeof options == 'undefined'){
@@ -228,7 +214,7 @@ BibTeX.prototype = {
 		var lastchar = '';
 		var buffer = '';
 		for (var i = 0; i < this.content.length; i++) {
-			charv = substr(this.content, i, 1);
+			charv =php.substr(this.content, i, 1);
 			if ((0 != open) && ('@' == charv)) {
 				if (!this._checkAt(buffer)) {
 					this._generateWarning('WARNING_MISSING_END_BRACE', '', buffer);
@@ -288,7 +274,7 @@ BibTeX.prototype = {
 			for (var i = 0; i < this.data.length; i++) {
 				cites[cites.length] = this.data[i]['cite'];
 			}
-			unique = array_unique(cites);
+			unique = php.array_unique(cites);
 			if (cites.length != unique.length) {//Some values have not been unique!
 				notuniques = [];
 				for (var i = 0; i < cites.length; i++) {
@@ -314,33 +300,33 @@ BibTeX.prototype = {
 			//We need a copy for printing the warnings
 		}
 		var ret = {};
-		if ('@string' == substr(entry, 0, 7).toLowerCase()) {
+		if ('@string' ==php.substr(entry, 0, 7).toLowerCase()) {
 			//String are not yet supported!
 			if (this._options['validate']) {
 				this._generateWarning('STRING_ENTRY_NOT_YET_SUPPORTED', '', entry + '}');
 			}
-		} else if ('@preamble' == substr(entry, 0, 9).toLowerCase()) {
+		} else if ('@preamble' ==php.substr(entry, 0, 9).toLowerCase()) {
 			//Preamble not yet supported!
 			if (this._options['validate']) {
 				this._generateWarning('PREAMBLE_ENTRY_NOT_YET_SUPPORTED', '', entry + '}');
 			}
 		} else {
 			//Parsing all fields
-			while (strrpos(entry, '=') !== false) {
-				position = strrpos(entry, '=');
+			while (php.strrpos(entry, '=') !== false) {
+				position = php.strrpos(entry, '=');
 				//Checking that the equal sign is not quoted or is not inside a equation (For example in an abstract)
 				proceed = true;
-				if (substr(entry, position - 1, 1) == '\\') {
+				if (php.substr(entry, position - 1, 1) == '\\') {
 					proceed = false;
 				}
 				if (proceed) {
 					proceed = this._checkEqualSign(entry, position);
 				}
 				while (!proceed) {
-					substring = substr(entry, 0, position);
-					position = strrpos(substring, '=');
+					substring = php.substr(entry, 0, position);
+					position = php.strrpos(substring, '=');
 					proceed = true;
-					if (substr(entry, position - 1, 1) == '\\') {
+					if (php.substr(entry, position - 1, 1) == '\\') {
 						proceed = false;
 					}
 					if (proceed) {
@@ -348,11 +334,11 @@ BibTeX.prototype = {
 					}
 				}
 
-				value = substr(entry, position + 1).trim();
-				entry = substr(entry, 0, position);
+				value = php.substr(entry, position + 1).trim();
+				entry = php.substr(entry, 0, position);
 
-				if (',' == substr(value, value.length - 1, 1)) {
-					value = substr(value, 0, -1);
+				if (',' == php.substr(value, value.length - 1, 1)) {
+					value = php.substr(value, 0, -1);
 				}
 				if (this._options['validate']) {
 					this._validateValue(value, entrycopy);
@@ -366,17 +352,17 @@ BibTeX.prototype = {
 				if (this._options['removeCurlyBraces']) {
 					value = this._removeCurlyBraces(value);
 				}
-				position = strrpos(entry, ',');
-				field = substr(entry, position + 1).trim().toLowerCase();
+				position = php.strrpos(entry, ',');
+				field = php.substr(entry, position + 1).trim().toLowerCase();
 				ret[field] = value;
-				entry = substr(entry, 0, position);
+				entry = php.substr(entry, 0, position);
 			}
 			//Parsing cite and entry type
-			var arr = explode('{', entry);
+			var arr = php.explode('{', entry);
 			ret['cite'] = arr[1].trim();
 			ret['entryType'] = arr[0].trim().toLowerCase();
 			if ('@' == ret['entryType'].substring(0, 1)) {
-				ret['entryType'] = substr(ret['entryType'], 1);
+				ret['entryType'] = php.substr(ret['entryType'], 1);
 			}
 			if (this._options['validate']) {
 				if (!this._checkAllowedEntryType(ret['entryType'])) {
@@ -384,7 +370,7 @@ BibTeX.prototype = {
 				}
 			}
 			//Handling the authors
-			if (in_array('author', php.array_keys(ret)) && this._options['extractAuthors']) {
+			if (php.in_array('author', php.array_keys(ret)) && this._options['extractAuthors']) {
 				ret['author'] = this._extractAuthors(ret['author']);
 			}
 		}
@@ -398,8 +384,8 @@ BibTeX.prototype = {
 		//If we reach the position the amount of opening and closing braces should be equal
 		var open = 0;
 		for (var i = entry.length - 1; i >= position; i--) {
-			precedingchar = substr(entry, i - 1, 1);
-			charv = substr(entry, i, 1);
+			precedingchar = php.substr(entry, i - 1, 1);
+			charv = php.substr(entry, i, 1);
 			if (('{' == charv) && ('\\' != precedingchar)) {
 				open++;
 			}
@@ -414,9 +400,9 @@ BibTeX.prototype = {
 		//Then it is possible that the braces are equal even if the '=' is in an equation+
 		if (ret) {
 			entrycopy = entry.trim();
-			lastchar = substr(entrycopy, entrycopy.length - 1, 1);
+			lastchar = php.substr(entrycopy, entrycopy.length - 1, 1);
 			if (',' == lastchar) {
-				lastchar = substr(entrycopy, entrycopy.length - 2, 1);
+				lastchar = php.substr(entrycopy, entrycopy.length - 2, 1);
 			}
 			if ('"' == lastchar) {
 				//The return value is set to false
@@ -425,8 +411,8 @@ BibTeX.prototype = {
 				ret = false;
 				found = 0;
 				for (var i = entry.length; i >= position; i--) {
-					precedingchar = substr(entry, i - 1, 1);
-					charv = substr(entry, i, 1);
+					precedingchar = php.substr(entry, i - 1, 1);
+					charv = php.substr(entry, i, 1);
 					if (('"' == charv) && ('\\' != precedingchar)) {
 						found++;
 					}
@@ -441,7 +427,7 @@ BibTeX.prototype = {
 	},
 
 	'_checkAllowedEntryType' : function(entry) {
-		return in_array(entry, this.allowedEntryTypes);
+		return php.in_array(entry, this.allowedEntryTypes);
 	},
 
 	'_checkAt' : function(entry) {
@@ -449,29 +435,29 @@ BibTeX.prototype = {
 		var opening = php.array_keys(this._delimiters);
 		var closing = array_values(this._delimiters);
 		//Getting the value (at is only allowd in values)
-		if (strrpos(entry, '=') !== false) {
-			position = strrpos(entry, '=');
+		if (php.strrpos(entry, '=') !== false) {
+			position = php.strrpos(entry, '=');
 			proceed = true;
-			if (substr(entry, position - 1, 1) == '\\') {
+			if (php.substr(entry, position - 1, 1) == '\\') {
 				proceed = false;
 			}
 			while (!proceed) {
-				substring = substr(entry, 0, position);
-				position = strrpos(substring, '=');
+				substring = php.substr(entry, 0, position);
+				position = php.strrpos(substring, '=');
 				proceed = true;
-				if (substr(entry, position - 1, 1) == '\\') {
+				if (php.substr(entry, position - 1, 1) == '\\') {
 					proceed = false;
 				}
 			}
-			value = substr(entry, position + 1).trim();
+			value = php.substr(entry, position + 1).trim();
 			open = 0;
 			charv = '';
 			lastchar = '';
 			for (var i = 0; i < value.length; i++) {
-				charv = substr(this.content, i, 1);
-				if (in_array(charv, opening) && ('\\' != lastchar)) {
+				charv = php.substr(this.content, i, 1);
+				if (php.in_array(charv, opening) && ('\\' != lastchar)) {
 					open++;
-				} else if (in_array(charv, closing) && ('\\' != lastchar)) {
+				} else if (php.in_array(charv, closing) && ('\\' != lastchar)) {
 					open--;
 				}
 				lastchar = charv;
@@ -486,16 +472,16 @@ BibTeX.prototype = {
 
 	'_stripDelimiter' : function(entry) {
 		var beginningdels = php.array_keys(this._delimiters);
-		var firstchar = substr(entry, 0, 1);
-		var lastchar = substr(entry, -1, 1);
-		while (in_array(firstchar, beginningdels)) {//The first character is an opening delimiter
+		var firstchar = php.substr(entry, 0, 1);
+		var lastchar = php.substr(entry, -1, 1);
+		while (php.in_array(firstchar, beginningdels)) {//The first character is an opening delimiter
 			if (lastchar == this._delimiters[firstchar]) {//Matches to closing Delimiter
-				entry = substr(entry, 1, -1);
+				entry = php.substr(entry, 1, -1);
 			} else {
 				break;
 			}
-			firstchar = substr(entry, 0, 1);
-			lastchar = substr(entry, -1, 1);
+			firstchar = php.substr(entry, 0, 1);
+			lastchar = php.substr(entry, -1, 1);
 		}
 		return entry;
 	},
@@ -514,7 +500,7 @@ BibTeX.prototype = {
 	'_extractAuthors' : function(entry) {
 		entry = this._unwrap(entry);
 		var authorarray = [];
-		authorarray = explode(' and ', entry);
+		authorarray = php.explode(' and ', entry);
 		for (var i = 0; i < authorarray.length; i++) {
 			var author = authorarray[i].trim();
 			/*The first version of how an author could be written (First von Last)
@@ -525,8 +511,8 @@ BibTeX.prototype = {
 			var jr = '';
 			if (author.indexOf(',') === -1) {
 				var tmparray = [];
-				//tmparray = explode(' ', author);
-				tmparray = explode(' |~', author);
+				//tmparray = php.explode(' ', author);
+				tmparray = php.explode(' |~', author);
 				var size = tmparray.length;
 				if (1 == size) {//There is only a last
 					last = tmparray[0];
@@ -584,10 +570,10 @@ BibTeX.prototype = {
 				}
 			} else {//Version 2 and 3
 				var tmparray = [];
-				tmparray = explode(',', author);
+				tmparray = php.explode(',', author);
 				//The first entry must contain von and last
 				vonlastarray = [];
-				vonlastarray = explode(' ', tmparray[0]);
+				vonlastarray = php.explode(' ', tmparray[0]);
 				size = vonlastarray.length;
 				if (1 == size) {//Only one entry.got to be the last
 					last = vonlastarray[0];
@@ -648,7 +634,7 @@ BibTeX.prototype = {
 			var found = false;
 			var openbrace = 0;
 			while (!found && (i <= word.length)) {
-				var letter = substr(trimmedword, i, 1);
+				var letter = php.substr(trimmedword, i, 1);
 				var ordv = letter.charCodeAt(0);
 				if (ordv == 123) {//Open brace
 					openbrace++;
@@ -691,7 +677,7 @@ BibTeX.prototype = {
 		var lastchar = '';
 		var charv = '';
 		for (var i = 0; i < entry.length; i++) {
-			charv = substr(entry, i, 1);
+			charv = php.substr(entry, i, 1);
 			if (('{' == charv) && ('\\' != lastchar)) {
 				open++;
 			}
@@ -708,20 +694,20 @@ BibTeX.prototype = {
 	'_removeCurlyBraces' : function(value) {
 		//First we save the delimiters
 		var beginningdels = php.array_keys(this._delimiters);
-		var firstchar = substr(value, 0, 1);
-		var lastchar = substr(value, -1, 1);
+		var firstchar = php.substr(value, 0, 1);
+		var lastchar = php.substr(value, -1, 1);
 		var begin = '';
 		var end = '';
-		while (in_array(firstchar, beginningdels)) {//The first character is an opening delimiter
+		while (php.in_array(firstchar, beginningdels)) {//The first character is an opening delimiter
 			if (lastchar == this._delimiters[firstchar]) {//Matches to closing Delimiter
 				begin += firstchar;
 				end += lastchar;
-				value = substr(value, 1, -1);
+				value = php.substr(value, 1, -1);
 			} else {
 				break;
 			}
-			firstchar = substr(value, 0, 1);
-			lastchar = substr(value, -1, 1);
+			firstchar = php.substr(value, 0, 1);
+			lastchar = php.substr(value, -1, 1);
 		}
 		//Now we get rid of the curly braces
 		var pattern = '/([^\\\\])\{(+*?[^\\\\])\}/';
@@ -776,10 +762,10 @@ BibTeX.prototype = {
 			array['first'] = array['first'].trim();
 		}
 		ret = this.authorstring;
-		ret = str_replace("VON", array['von'], ret);
-		ret = str_replace("LAST", array['last'], ret);
-		ret = str_replace("JR", array['jr'], ret);
-		ret = str_replace("FIRST", array['first'], ret);
+		ret = php.str_replace("VON", array['von'], ret);
+		ret = php.str_replace("LAST", array['last'], ret);
+		ret = php.str_replace("JR", array['jr'], ret);
+		ret = php.str_replace("FIRST", array['first'], ret);
 		return ret.trim();
 	},
 
@@ -795,7 +781,7 @@ BibTeX.prototype = {
 				if (this._options['wordWrapWidth'] > 0) {
 					val = this._wordWrap(val);
 				}
-				if (!in_array(key, ['cite', 'entryType', 'author'])) {
+				if (!php.in_array(key, ['cite', 'entryType', 'author'])) {
 					bibtex += "\t" + key + ' = {' + val + "},\n";
 				}
 			}
@@ -870,10 +856,10 @@ BibTeX.prototype = {
 				}
 			}
 			if (('' != title) || ('' != journal) || ('' != year) || ('' != authors)) {
-				line = str_replace("TITLE", title, line);
-				line = str_replace("JOURNAL", journal, line);
-				line = str_replace("YEAR", year, line);
-				line = str_replace("AUTHORS", authors, line);
+				line = php.str_replace("TITLE", title, line);
+				line = php.str_replace("JOURNAL", journal, line);
+				line = php.str_replace("YEAR", year, line);
+				line = php.str_replace("AUTHORS", authors, line);
 				line += "\n\\par\n";
 				ret += line;
 			} else {
@@ -921,10 +907,10 @@ BibTeX.prototype = {
 			}
 
 			if (('' != title) || ('' != journal) || ('' != year) || ('' != authors)) {
-				line = str_replace("TITLE", title, line);
-				line = str_replace("JOURNAL", journal, line);
-				line = str_replace("YEAR", year, line);
-				line = str_replace("AUTHORS", authors, line);
+				line = php.str_replace("TITLE", title, line);
+				line = php.str_replace("JOURNAL", journal, line);
+				line = php.str_replace("YEAR", year, line);
+				line = php.str_replace("AUTHORS", authors, line);
 				line += "\n";
 				ret += line;
 			} else {
