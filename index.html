@@ -1,6 +1,4 @@
 <!doctype html>
-<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
-<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
 <html>
 <head>
   <meta charset="utf-8">
@@ -13,13 +11,9 @@
 
   <title>jsBibTeX</title>
   <meta name="description" content="A Javascript BibTex Parser">
-
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
 </head>
-
 <body>
-
   <div class="wrapper">
     <header>
       <h1 class="title">jsBibTeX</h1>
@@ -36,33 +30,48 @@
         <span class="blc"></span><span class="trc"></span>
         </div>
         <article class="markdown-body">
-          <p>Copyright (c) 2013 <a href="AABoyles@gmail.com">Tony Boyles</a></p>
+          <p>Copyright (c) 2013 <a href="mailto:AABoyles@gmail.com">Tony Boyles</a></p>
+          <p>This project is a fork of <a href="http://sourceforge.net/projects/jsbibtex/">Javascript BibTeX Parser</a>, Which is Copyrighted (c) 2008 by <a href="http://www.sfu.ca/">Simon Fraser University</a>, written by <a href="mailto:shannah@sfu.ca">Steve Hannah</a>, and distributed under the <a href="http://www.gnu.org/licenses/gpl.html">GPL v.3</a></p>
 
-<h2>
-<a name="attribution" class="anchor" href="#attribution"><span class="octicon octicon-link"></span></a>ATTRIBUTION</h2>
+          <h2><a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>WHY?</h2>
+          <p>The <a href="http://sourceforge.net/projects/jsbibtex/">original library</a> was a port of the PHP Structures_BibTex library.  To facilitate the conversion of the codebase, many global functions were borrowed from <a href="http://phpjs.org/">php.js</a>.  The Unfortunate result of this design decision was that much of the code doesn't resemble Javascript at all, but rather reads like PHP.  One of the primary tasks of this fork is to eliminate all of these alien structures such that the code behaves in a way that's more familiar to modern Javascript.</p>
 
-<p>This project is a fork of <a href="http://sourceforge.net/projects/jsbibtex/">Javascript BibTeX Parser</a>, Which is Distributed under the GPL v.3, Copyright (c) 2008 Simon Fraser University by <a href="shannah@sfu.ca">Steve Hannah</a></p>
+          <h2><a name="why" class="anchor" href="#why"><span class="octicon octicon-link"></span></a>WHY DID <i>YOU</i> DO THIS?</h2>
+          <p>I wanted to build an <a href="https://github.com/aaboyles/aaboyles.github.io/">agile, client-side only website</a> that could showcase my resume, similar to what can be done using <a href="http://theopenscholar.org/">OpenScholar</a>, only with a much smaller footprint.  One of the features I especially liked about OpenScholar was the way it consumed and exported BibTeX with exactly zero nonsense.  That's a hard act to match using client-side code only, but I was up for the challenge when I realized the <a href="http://sourceforge.net/projects/jsbibtex/">first half of the project already existed</a> and was basically abandoned.</p>
 
-<h2>
-<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>LICENSE</h2>
+          <h2><a name="use" class="anchor" href="#use"><span class="octicon octicon-link"></span></a>USE</h2>
+          <p>This library is a simple Javascript library.  To use it, just load it up in your app:</p>
+          <pre><code>&lt;script src="jsBibTeX.js"&gt;&lt;/script&gt;</code></pre>
 
-<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+          <p>Now, the important part is parsing your BibTeX, so let's imagine you have some BibTeX embedded in an invisible div, like this:</p>
+          <pre><code>&lt;div id="myBibliography" style="display:none"&gt;
+  @book{von2007theory,
+    title={Theory of games and economic behavior},
+    author={Von Neumann, John and Morgenstern, Oskar},
+    year={1943},
+    publisher={Princeton university press}
+  }
+&lt;/div&gt;</code></pre>
+          <p>We can get your raw BibTeX in Javascript by calling:</p>
+          <pre><code>var rawBibTeX = document.getElementById("myBibliography");</code></pre>
 
-<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>
+          <p>There are two ways to use jsBibTeX, but underneath the hood they're almost exactly the same.  You can use the jsBibTeX global variable, or you can instantiate your own BibTeX objects.</p>
 
-<p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a></p>
+          <h3><a name="quick" class="anchor" href="#quick"><span class="octicon octicon-link"></span></a>Quick</h3>
+
+          <p>You can access it by calling its global variable, <span style="font-family: monospace; font-size: small;">jsBibTeX</span>. Note the capitalization -- if it irritates you, just copy the reference to whatever name you want, like so:</p>
+          <pre><code>var bib = jsBibTeX;</code></pre>
+          
+
+          <h2><a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>LICENSE</h2>
+          <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+          <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p>
+          <p>You should have received a copy of the GNU General Public License along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a></p>
         </article>
       </div>
     </div>
     <footer>
-      <div class="owner">
-      <p><a href="https://github.com/AABoyles" class="avatar"><img src="https://2.gravatar.com/avatar/ad1e78459902691e92658a3ba3c58778?d=https%3A%2F%2Fidenticons.github.com%2F7967afb6a6e981d81073e30c89ec21bb.png&amp;r=x&amp;s=60" width="48" height="48"/></a> <a href="https://github.com/AABoyles">AABoyles</a> maintains <a href="https://github.com/AABoyles/jsBibtex">jsBibTeX</a></p>
-
-
-      </div>
-      <div class="creds">
-        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br/>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
-      </div>
+      <div class="owner"><p><a href="https://github.com/AABoyles" class="avatar"><img src="https://2.gravatar.com/avatar/ad1e78459902691e92658a3ba3c58778?d=https%3A%2F%2Fidenticons.github.com%2F7967afb6a6e981d81073e30c89ec21bb.png&amp;r=x&amp;s=60" width="48" height="48"/></a> <a href="http://aaboyles.com/">Tony Boyles</a> maintains <a href="https://github.com/AABoyles/jsBibtex">jsBibTeX</a></p></div>
     </footer>
   </div>
   <div class="current-section">
@@ -70,7 +79,5 @@
     <a href="https://github.com/AABoyles/jsBibtex/tarball/master" class="tar">tar</a><a href="https://github.com/AABoyles/jsBibtex/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
     <p class="name"></p>
   </div>
-
-  
 </body>
 </html>
