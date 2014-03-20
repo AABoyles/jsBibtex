@@ -129,18 +129,6 @@ php.substr = function(f_string, f_start, f_length) {
 	return f_string.substring(f_start, f_length);
 };
 
-php.wordwrap = function(str, int_width, str_break, cut) {
-	var m = int_width, b = str_break, c = cut;
-	var i, j, l, s, r;
-	if (m < 1) { return str; }
-	for ( i = -1, l = ( r = str.split("\n")).length; ++i < l; r[i] += s) {
-		for ( s = r[i], r[i] = ""; s.length > m; r[i] += s.slice(0, j) + (( s = s.slice(j)).length ? b : "")) {
-			j = c == 2 || (j = s.slice(0, m + 1).match(/\S*(\s)?$/))[1] ? m : j.input.length - j[0].length || c == 1 && m || j.input.length + ( j = s.slice(m).match(/^\S*/)).input.length;
-		}
-	}
-	return r.join("\n");
-};
-
 php.array_unique = function(array) {
 	var p, i, j, tmp_arr = array;
 	for ( i = tmp_arr.length; i; ) {
@@ -492,7 +480,15 @@ BibTeX.prototype = {
 
 	'_wordwrap' : function(entry) {
 		if (('' != entry) && (typeof entry == 'string')) {
-			entry = php.wordwrap(entry, this._options['wordWrapWidth'], this._options['wordWrapBreak'], this._options['wordWrapCut']);
+			var m = this._options['wordWrapWidth'], b = this._options['wordWrapBreak'], c = this._options['wordWrapCut'];
+			var i, j, l, s, r;
+			if (m < 1) { return entry; }
+			for ( i = -1, l = ( r = entry.split("\n")).length; ++i < l; r[i] += s) {
+				for ( s = r[i], r[i] = ""; s.length > m; r[i] += s.slice(0, j) + (( s = s.slice(j)).length ? b : "")) {
+					j = c == 2 || (j = s.slice(0, m + 1).match(/\S*(\s)?$/))[1] ? m : j.input.length - j[0].length || c == 1 && m || j.input.length + ( j = s.slice(m).match(/^\S*/)).input.length;
+				}
+			}
+			entry = r.join("\n");
 		}
 		return entry;
 	},
